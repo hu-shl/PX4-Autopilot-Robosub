@@ -17,7 +17,7 @@
 # CURRENT PROBLEMS
 # 1.
 # In the original custom config file, CONFIG_MODULES_COLLISION_PREVENTION was set to n
-# This module does noet exist in the default.px4board file. For now we don't include it.
+# This module does not exist in the default.px4board file. For now we don't include it.
 
 # 2.
 # -
@@ -112,6 +112,7 @@ CONFIG_BOARD_UAVCAN_TIMER_OVERRIDE=2
 # PX4 MODULES
 # ================================================================================
 
+
 # FIXED WING
 CONFIG_MODULES_FW_ATT_CONTROL=n				# We are not building a fixed wing aircraft
 CONFIG_MODULES_FW_AUTOTUNE_ATTITUDE_CONTROL=n		#
@@ -124,10 +125,14 @@ CONFIG_MODULES_VTOL_ATT_CONTROL=n			# Neither a VTOL
 # MULTI COPTER
 # [SUBJECTTOCHANGE] For UUV/AUV/ROV's, Multi Copter (MC_**) modules currently are mostly used for navigation, position, etc.
 CONFIG_MODULES_MC_ATT_CONTROL=y
-CONFIG_MODULES_MC_AUTOTUNE_ATTITUDE_CONTROL=y
-CONFIG_MODULES_MC_HOVER_THRUST_ESTIMATOR=y		# Maybe we can remove this, needs to be investigated
-CONFIG_MODULES_MC_POS_CONTROL=y
-CONFIG_MODULES_MC_RATE_CONTROL=y
+CONFIG_MODULES_MC_AUTOTUNE_ATTITUDE_CONTROL=n
+CONFIG_MODULES_MC_HOVER_THRUST_ESTIMATOR=n		# Maybe we can remove this, needs to be investigated
+CONFIG_MODULES_MC_POS_CONTROL=y 			# keep enabled, as modules are dependent on it
+CONFIG_MODULES_MC_RATE_CONTROL=n
+
+CONFIG_MODULES_COLLISION_PREVENTION=n
+CONFIG_MODULES_RS_MOVEMENT_CONTROL=y
+
 
 # NAVIGATION
 CONFIG_MODULES_COMMANDER=y
