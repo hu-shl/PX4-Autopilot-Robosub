@@ -6,6 +6,14 @@
 #
 
 #
+# Robosub setup
+#
+if [ $VEHICLE_TYPE = robosub ]
+then
+	. ${R}etc/init.d/rc.robosub_apps
+fi
+
+#
 # Fixed wing setup.
 #
 if [ $VEHICLE_TYPE = fw ]

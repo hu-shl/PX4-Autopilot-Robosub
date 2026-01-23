@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# Thijs Vader, january 2026
+#
+# Custom Control Stack for 6DOF Sub
+
+
+# Start Flight Mode Manager
+# Essential: This module reads the RC sticks (Manual) or Mission waypoints (Auto)
+# and publishes the 'trajectory_setpoint' topic
+flight_mode_manager start
+
+# Start YOUR Custom Control Module
+# Replaces: mc_pos_control, mc_att_control, mc_rate_control
+rs_movement_control start
+
+# Start Land Detector
+land_detector start multicopter
+
+# Start Control Allocator
+# Essential: Takes your module's Torque/Thrust output and mixes it to the motors.
+control_allocator start

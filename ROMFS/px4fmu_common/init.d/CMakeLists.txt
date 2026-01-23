@@ -47,6 +47,13 @@ px4_add_romfs_files(
 	rc.sysinit
 )
 
+if(CONFIG_MODULES_RS_MOVEMENT_CONTROL)
+	px4_add_romfs_files(
+		rc.robosub_apps
+		rc.robosub_defaults
+	)
+endif()
+
 if(CONFIG_MODULES_AIRSHIP_ATT_CONTROL)
 	px4_add_romfs_files(
 		rc.airship_apps

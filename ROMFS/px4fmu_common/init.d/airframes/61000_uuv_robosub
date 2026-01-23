@@ -12,83 +12,8 @@
 # @output MAIN7 Motor 7
 # @maintainer Thijs
 
-# Load UUV Airframe Defaults
-${R}etc/init.d/rc.uuv_defaults
-
-# ================================================================================
-# GENERAL SETTINGS
-# ================================================================================
-
-# To know more about a parameter, reference the documentation:
-# https://docs.px4.io/main/en/advanced_config/parameter_reference# < YOUR PARAMETER HERE >
-# For example for CA_METHOD:
-# https://docs.px4.io/main/en/advanced_config/parameter_reference#CA_METHOD
-
-
-# Manual Control & Monitoring Settings
-# ========================================
-
-# Control Input Source Selection
-# -> MAVLink (MANUAL_CONTROL) only
-param set-default COM_RC_IN_MODE 1
-
-# Manual Control loss failsafe mode
-# -> Disarm
-param set-default NAV_RCL_ACT 4
-
-# Land Detection Trigger Time
-# -> 10 seconds (MAX) (Don't disarm the drone within 10 seconds when on the ocean floor)
-param set-default LNDMC_TRIG_TIME 10
-
-# Mavlink mode for instance #2 (Ethernet)
-# -> Config (All information)
-param set-default MAV_2_MODE 5
-
-
-# DVL Settings
-# ========================================
-
-# Reference Source for Height data
-# -> External Vision (DVL data over DDS)
-param set-default EKF2_HGT_REF 3
-
-# External Vision (EV) Sensor Aiding Bitmask
-# -> 2 (Vertical Position) + 4 (3D Velocity)
-param set-default EKF2_EV_CTRL 6
-
-# External Vision Processing Delay
-# -> ~150ms is a good value to start with, measure later
-param set-default EKF2_EV_DELAY 150
-
-# DDS Data source Selection
-# -> Ethernet
-param set-default UXRCE_DDS_CFG 1000
-
-# uXRCE-DDS Agent IP address
-# -> -1856423239 (145.86.10.185?)
-param set-default UXRCE_DDS_AG_IP -1856423239
-
-# uXRCE-DDS Agent port
-# -> port 8888
-param set-default UXRCE_DDS_PRT 8888
-
-
-# Battery Settings
-# ========================================
-
-# Number of cells in battery #1
-# -> 3 (3S), Change this later to 6S for next revision
-param set-default BAT1_N_CELLS 3
-
-# Enable Power Sensing using INA228 (PM02D)
-# -> 1 (Enable)
-param set-default SENS_EN_INA228 1
-
-# Battery Measuring Source
-# -> 0 (Power Module, PM02D)
-param set-default BAT1_SOURCE 0
-
-
+# load custom robosub settings from rc.robosub_defaults
+. ${R}etc/init.d/rc.robosub_defaults
 
 # ================================================================================
 # CONTROL ALLOCATION SETTINGS
@@ -107,7 +32,7 @@ param set-default CA_AIRFRAME 7
 param set-default CA_ROTOR_COUNT 7
 
 # Failure Mode
-# -> If a motor fails, remove from
+# -> If a motor fails, remove from allocation
 param set-default CA_FAILURE_MODE 1
 
 # Reversible Motors
@@ -120,20 +45,19 @@ param set-default CA_R_REV 255
 # AIRFRAME GEOMETRY DEFINITION
 # ================================================================================
 # PX4 Body Frame: X = Forward, Y = Right, Z = Down (NED Frame)
-# You must set Position (PX,PY,PZ) and Axis/Direction (AX,AY,AZ) for each thruster.
 
 # --- THRUSTER 1 --- (3D printed thruster, Front-Left)
 # Position
-param set-default CA_ROTOR0_PX 0.21   	# 21cm  forward
-param set-default CA_ROTOR0_PY -0.08  	# 8cm 	left
-param set-default CA_ROTOR0_PZ 0.06   	# 6cm  	down
+param set-default CA_ROTOR0_PX 0.21     # 21cm  forward
+param set-default CA_ROTOR0_PY -0.08    # 8cm   left
+param set-default CA_ROTOR0_PZ 0.06     # 6cm   down
 # Axis
-param set-default CA_ROTOR0_AX 0.0	#
-param set-default CA_ROTOR0_AY 0.0	# Thrust Upward
-param set-default CA_ROTOR0_AZ -1.0	#
+param set-default CA_ROTOR0_AX 0.0
+param set-default CA_ROTOR0_AY 0.0      # Thrust Upward
+param set-default CA_ROTOR0_AZ -1.0
 # Coefficients
-param set-default CA_ROTOR0_KM 0.0	# Torque coefficient (Torque around the thruster, produced by the spinning water from the thruster, we need to measure this, for now removed)
-param set-default CA_ROTOR0_CT 7.5	# Thrust Coefficient (Thrust of 7,5N at 100%)
+param set-default CA_ROTOR0_KM 0.0
+param set-default CA_ROTOR0_CT 7.5      # Thrust of 7,5N at 100%
 
 # --- THRUSTER 2 --- (3D printed thruster, Front-Right)
 # Position
@@ -141,9 +65,9 @@ param set-default CA_ROTOR1_PX 0.21
 param set-default CA_ROTOR1_PY 0.08
 param set-default CA_ROTOR1_PZ 0.06
 # Axis
-param set-default CA_ROTOR1_AX 0.0	#
-param set-default CA_ROTOR1_AY 0.0	# Thrust Upward
-param set-default CA_ROTOR1_AZ -1.0	#
+param set-default CA_ROTOR1_AX 0.0
+param set-default CA_ROTOR1_AY 0.0      # Thrust Upward
+param set-default CA_ROTOR1_AZ -1.0
 # Coefficients
 param set-default CA_ROTOR1_KM 0.0
 param set-default CA_ROTOR1_CT 7.5
@@ -154,9 +78,9 @@ param set-default CA_ROTOR2_PX 0.16
 param set-default CA_ROTOR2_PY 0.0
 param set-default CA_ROTOR2_PZ 0.06
 # Axis
-param set-default CA_ROTOR2_AX 0.0	#
-param set-default CA_ROTOR2_AY 1.0	# Thrust Right(East)
-param set-default CA_ROTOR2_AZ 0.0	#
+param set-default CA_ROTOR2_AX 0.0
+param set-default CA_ROTOR2_AY 1.0      # Thrust Right(East)
+param set-default CA_ROTOR2_AZ 0.0
 # Coefficients
 param set-default CA_ROTOR2_KM 0.0
 param set-default CA_ROTOR2_CT 7.5
@@ -167,13 +91,12 @@ param set-default CA_ROTOR3_PX 0.0
 param set-default CA_ROTOR3_PY -0.16
 param set-default CA_ROTOR3_PZ 0.0
 # Axis
-param set-default CA_ROTOR3_AX 1.0    	#
-param set-default CA_ROTOR3_AY 0.0	# Thrust Forward
-param set-default CA_ROTOR3_AZ 0.0	#
+param set-default CA_ROTOR3_AX 1.0
+param set-default CA_ROTOR3_AY 0.0      # Thrust Forward
+param set-default CA_ROTOR3_AZ 0.0
 # Coefficients
 param set-default CA_ROTOR3_KM 0.0
-param set-default CA_ROTOR3_CT 35.0	# Thrust of 65N at 100% for T200 @20V (change later to 65N if running 6S)
-					# https://bluerobotics.com/store/thrusters/t100-t200-thrusters/t200-thruster-r2-rp/
+param set-default CA_ROTOR3_CT 35.0     # Thrust of 65N at 100% for T200 @20V
 
 # --- THRUSTER 5 --- (T200, Right)
 # Position
@@ -181,13 +104,12 @@ param set-default CA_ROTOR4_PX 0.0
 param set-default CA_ROTOR4_PY 0.16
 param set-default CA_ROTOR4_PZ 0.0
 # Axis
-param set-default CA_ROTOR4_AX 1.0    	#
-param set-default CA_ROTOR4_AY 0.0	# Thrust Forward
-param set-default CA_ROTOR4_AZ 0.0	#
+param set-default CA_ROTOR4_AX 1.0
+param set-default CA_ROTOR4_AY 0.0      # Thrust Forward
+param set-default CA_ROTOR4_AZ 0.0
 # Coefficients
 param set-default CA_ROTOR4_KM 0.0
-param set-default CA_ROTOR4_CT 35.0	# Thrust of 65N at 100% for T200 @20V (change later to 65N if running 6S)
-					# https://bluerobotics.com/store/thrusters/t100-t200-thrusters/t200-thruster-r2-rp/
+param set-default CA_ROTOR4_CT 35.0     # Thrust of 65N at 100% for T200 @20V
 
 # --- THRUSTER 6 --- (3D printed thruster, Back)
 # Position
@@ -195,9 +117,9 @@ param set-default CA_ROTOR5_PX -0.26
 param set-default CA_ROTOR5_PY 0.0
 param set-default CA_ROTOR5_PZ 0.06
 # Axis
-param set-default CA_ROTOR5_AX 0.0   	#
-param set-default CA_ROTOR5_AY 1.0	# Thrust Right(East)
-param set-default CA_ROTOR5_AZ 0.0	#
+param set-default CA_ROTOR5_AX 0.0
+param set-default CA_ROTOR5_AY 1.0      # Thrust Right(East)
+param set-default CA_ROTOR5_AZ 0.0
 # Coefficients
 param set-default CA_ROTOR5_KM 0.0
 param set-default CA_ROTOR5_CT 7.5
@@ -208,22 +130,36 @@ param set-default CA_ROTOR6_PX -0.34
 param set-default CA_ROTOR6_PY 0.0
 param set-default CA_ROTOR6_PZ 0.06
 # Axis
-param set-default CA_ROTOR6_AX 0.0	#
-param set-default CA_ROTOR6_AY 0.0	# Thrust Upward
-param set-default CA_ROTOR6_AZ -1.0 	#
+param set-default CA_ROTOR6_AX 0.0
+param set-default CA_ROTOR6_AY 0.0      # Thrust Upward
+param set-default CA_ROTOR6_AZ -1.0
 # Coefficients
 param set-default CA_ROTOR6_KM 0.0
 param set-default CA_ROTOR6_CT 7.5
 
+# --- THRUSTER 8 --- (3D printed thruster, Back)
+# Position
+# param set-default CA_ROTOR6_PX 0.00
+# param set-default CA_ROTOR6_PY 0.00
+# param set-default CA_ROTOR6_PZ 0.00
+# Axis
+# param set-default CA_ROTOR6_AX 0.0
+# param set-default CA_ROTOR6_AY 0.0      # Thrust Upward
+# param set-default CA_ROTOR6_AZ 0.0
+# Coefficients
+# param set-default CA_ROTOR6_KM 0.0
+# param set-default CA_ROTOR6_CT 0.0
 
+# Map motors 1-7 to AUX out 1-7
+param set-default PWM_AUX_FUNC1 101
+param set-default PWM_AUX_FUNC2 102
+param set-default PWM_AUX_FUNC3 103
+param set-default PWM_AUX_FUNC4 104
+param set-default PWM_AUX_FUNC5 105
+param set-default PWM_AUX_FUNC6 106
+param set-default PWM_AUX_FUNC7 107
 
 # ================================================================================
 # MULTICOPTER TUNING GAINS
 # ================================================================================
 # Water is denser than air; PID gains usually need to be higher or rates lower.
-param set-default MC_ROLL_P 6.5
-param set-default MC_ROLLRATE_P 0.15
-param set-default MC_PITCH_P 6.5
-param set-default MC_PITCHRATE_P 0.15
-param set-default MC_YAW_P 2.8
-param set-default MC_YAWRATE_P 0.2

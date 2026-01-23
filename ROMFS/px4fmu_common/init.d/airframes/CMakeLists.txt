@@ -40,6 +40,13 @@ px4_add_romfs_files(
 	# [22000, 22999] Reserve for custom models
 )
 
+if(CONFIG_MODULES_RS_MOVEMENT_CONTROL)
+     px4_add_romfs_files(
+          61000_uuv_robosub
+     )
+endif()
+
+
 if(CONFIG_MODULES_SIMULATION_PWM_OUT_SIM)
 	px4_add_romfs_files(
 		# [1000, 1999] Simulation setups
@@ -172,6 +179,5 @@ if(CONFIG_MODULES_UUV_ATT_CONTROL)
 		60000_uuv_generic
 		60001_uuv_hippocampus
 		60002_uuv_bluerov2_heavy
-		61000_uuv_robosub
 	)
 endif()
