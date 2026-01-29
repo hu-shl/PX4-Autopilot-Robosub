@@ -263,6 +263,10 @@ set(msg_files
 	versioned/VehicleRatesSetpoint.msg
 	versioned/VehicleStatus.msg
 	versioned/VtolVehicleStatus.msg
+
+	# Robosub uORB topics
+	# robosub/exampleTopic.msg
+	robosub/BuoyancyControl.msg
 )
 list(SORT msg_files)
 

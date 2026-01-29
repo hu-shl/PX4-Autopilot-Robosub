@@ -1,0 +1,5 @@
+menuconfig MODULES_RS_MOVEMENT_CONTROL
+    bool "Robosub Movement Control"
+    default n
+    ---help---
+        Custom position and thrust control module for Robosub
