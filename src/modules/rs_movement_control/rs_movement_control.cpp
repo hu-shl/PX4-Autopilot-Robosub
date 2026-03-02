@@ -191,13 +191,19 @@ void RS_MovementControl::Run()
 
 		// load data from manual control to output
 		// NED frame
-		torqueSetpoint.xyz[0] = manualControlInput.roll;
-		torqueSetpoint.xyz[1] = manualControlInput.pitch;
-		torqueSetpoint.xyz[2] = manualControlInput.yaw;
+		torqueSetpoint.xyz[0] = 0.f;
+		torqueSetpoint.xyz[1] = manualControlInput.throttle;
+		torqueSetpoint.xyz[2] = manualControlInput.roll;
 
-		thrustSetpoint.xyz[0] = manualControlInput.throttle;
+		thrustSetpoint.xyz[0] = manualControlInput.pitch;
 		thrustSetpoint.xyz[1] = 0.f;
-		thrustSetpoint.xyz[2] = 0.f;
+		thrustSetpoint.xyz[2] = manualControlInput.yaw;
+
+		//thrustSetpoint.xyz[0] = manualControlInput.pitch;		//thrustsetpoint code Wesse
+		//thrustSetpoint.xyz[1] = manualControlInput.roll;
+		//thrustSetpoint.xyz[2] = manualControlInput.throttle;
+
+
 
 		buoyancyControl.tank_command[0] = manualControlInput.roll;
 		buoyancyControl.tank_command[1] = manualControlInput.pitch;

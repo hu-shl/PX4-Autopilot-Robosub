@@ -1,0 +1,168 @@
+#!/bin/sh
+#
+# @name Custom Robosub Airframe V3
+# @type Underwater Robot
+# @class UUV
+# @output MAIN1 Motor 1
+# @output MAIN2 Motor 2
+# @output MAIN3 Motor 3
+# @output MAIN4 Motor 4
+# @output MAIN5 Motor 5
+# @output MAIN6 Motor 6
+# @output MAIN7 Motor 7
+# @output MAIN8 Motor 8
+# @maintainer
+
+# load custom robosub settings from rc.robosub_defaults
+. ${R}etc/init.d/rc.robosub_defaults
+
+# ================================================================================
+# CONTROL ALLOCATION SETTINGS
+# ================================================================================
+
+# Control Allocation Method(Algorithm) Used
+# -> Automatic
+param set-default CA_METHOD 2
+
+# Airframe Type
+# -> Motors, 6DOF
+param set-default CA_AIRFRAME 7
+
+# Rotor Count
+# -> 7 rotors (Thrusters)
+param set-default CA_ROTOR_COUNT 8
+
+# Failure Mode
+# -> If a motor fails, remove from allocation
+param set-default CA_FAILURE_MODE 1
+
+# Reversible Motors
+# -> Set the first 8 thrusters to be reversible (bitmask)
+param set-default CA_R_REV 255
+
+
+
+# ================================================================================
+# AIRFRAME GEOMETRY DEFINITION
+# ================================================================================
+# PX4 Body Frame: X = Forward, Y = Right, Z = Down (NED Frame)
+
+# --- THRUSTER 1 --- (3D printed thruster, Front-Left)
+# Position
+param set-default CA_ROTOR0_PX 0.26   # 21cm  forward
+param set-default CA_ROTOR0_PY -0.145    # 8cm   left
+param set-default CA_ROTOR0_PZ -0.184     # 6cm   down
+# Axis
+param set-default CA_ROTOR0_AX 0.0
+param set-default CA_ROTOR0_AY 0.0      # Thrust Upward
+param set-default CA_ROTOR0_AZ 1.0
+# Coefficients
+param set-default CA_ROTOR0_KM 0.0
+param set-default CA_ROTOR0_CT 25      # Thrust of 7,5N at 100%
+
+# --- THRUSTER 2 --- (3D printed thruster, Front-Right)
+# Position
+param set-default CA_ROTOR1_PX 0.26
+param set-default CA_ROTOR1_PY 0.145
+param set-default CA_ROTOR1_PZ -0.184
+# Axis
+param set-default CA_ROTOR1_AX 0.0
+param set-default CA_ROTOR1_AY 0.0      # Thrust Upward
+param set-default CA_ROTOR1_AZ 1.0
+# Coefficients
+param set-default CA_ROTOR1_KM 0.0
+param set-default CA_ROTOR1_CT 25
+
+# --- THRUSTER 3 --- (3D printed thruster, Front-Middle)
+# Position
+param set-default CA_ROTOR2_PX 0.175
+param set-default CA_ROTOR2_PY 0.0
+param set-default CA_ROTOR2_PZ -0.039
+# Axis
+param set-default CA_ROTOR2_AX 0.05
+param set-default CA_ROTOR2_AY 1.0      # Thrust Right(East)
+param set-default CA_ROTOR2_AZ 0.0
+# Coefficients
+param set-default CA_ROTOR2_KM 0.0
+param set-default CA_ROTOR2_CT 7.5
+
+# --- THRUSTER 4 --- (T200, Left)
+# Position
+param set-default CA_ROTOR3_PX 0.0
+param set-default CA_ROTOR3_PY -0.172
+param set-default CA_ROTOR3_PZ 0.0
+# Axis
+param set-default CA_ROTOR3_AX 1.0
+param set-default CA_ROTOR3_AY 0.0      # Thrust Forward
+param set-default CA_ROTOR3_AZ 0.0
+# Coefficients
+param set-default CA_ROTOR3_KM 0.0
+param set-default CA_ROTOR3_CT 35.0     # Thrust of 65N at 100% for T200 @20V
+
+# --- THRUSTER 5 --- (T200, Right)
+# Position
+param set-default CA_ROTOR4_PX 0.0
+param set-default CA_ROTOR4_PY 0.172
+param set-default CA_ROTOR4_PZ 0.0
+# Axis
+param set-default CA_ROTOR4_AX 1.0
+param set-default CA_ROTOR4_AY 0.0      # Thrust Forward
+param set-default CA_ROTOR4_AZ 0.0
+# Coefficients
+param set-default CA_ROTOR4_KM 0.0
+param set-default CA_ROTOR4_CT 35.0     # Thrust of 65N at 100% for T200 @20V
+
+# --- THRUSTER 6 --- (3D printed thruster, Back-Middle)
+# Position
+param set-default CA_ROTOR5_PX -0.23
+param set-default CA_ROTOR5_PY 0.0
+param set-default CA_ROTOR5_PZ -0.039
+# Axis
+param set-default CA_ROTOR5_AX 0.05
+param set-default CA_ROTOR5_AY 1.0      # Thrust Right(East)
+param set-default CA_ROTOR5_AZ 0.0
+# Coefficients
+param set-default CA_ROTOR5_KM 0.0
+param set-default CA_ROTOR5_CT 7.5
+
+# --- THRUSTER 7 --- (3D printed thruster, Back-Left)
+# Position
+param set-default CA_ROTOR6_PX -0.265
+param set-default CA_ROTOR6_PY -0.145
+param set-default CA_ROTOR6_PZ -0.184
+# Axis
+param set-default CA_ROTOR6_AX 0.0
+param set-default CA_ROTOR6_AY 0.0      # Thrust Upward
+param set-default CA_ROTOR6_AZ 1.0
+# Coefficients
+param set-default CA_ROTOR6_KM 0.0
+param set-default CA_ROTOR6_CT 25
+
+
+# --- THRUSTER 8 --- (3D printed thruster, Back-Right)
+ # Position
+ param set-default CA_ROTOR7_PX -0.265
+ param set-default CA_ROTOR7_PY 0.145
+ param set-default CA_ROTOR7_PZ -0.184
+ # Axis
+ param set-default CA_ROTOR7_AX 0.0
+ param set-default CA_ROTOR7_AY 0.0      # Thrust Upward
+ param set-default CA_ROTOR7_AZ 1.0
+ # Coefficients
+ param set-default CA_ROTOR7_KM 0.0
+ param set-default CA_ROTOR7_CT 25
+
+# Map motors 1-7 to AUX out 1-7
+param set-default PWM_AUX_FUNC1 101
+param set-default PWM_AUX_FUNC2 102
+param set-default PWM_AUX_FUNC3 103
+param set-default PWM_AUX_FUNC4 104
+param set-default PWM_AUX_FUNC5 105
+param set-default PWM_AUX_FUNC6 106
+param set-default PWM_AUX_FUNC7 107
+param set-default PWM_AUX_FUNC8 108
+
+# ================================================================================
+# MULTICOPTER TUNING GAINS
+# ================================================================================
+# Water is denser than air; PID gains usually need to be higher or rates lower.
