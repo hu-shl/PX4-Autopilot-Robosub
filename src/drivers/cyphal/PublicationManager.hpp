@@ -43,6 +43,7 @@
 #pragma once
 
 #include <px4_platform_common/px4_config.h>
+#include "Publishers/Buoyancy/Buoyancy_publisher.hpp" // Ensure spelling matches your file
 
 #ifndef CONFIG_CYPHAL_GNSS_PUBLISHER
 #define CONFIG_CYPHAL_GNSS_PUBLISHER 0
@@ -111,7 +112,7 @@ private:
 	CanardHandle &_canard_handle;
 	UavcanParamManager &_param_manager;
 	List<UavcanPublisher *> _dynpublishers;
-
+	BuoyancyPublisher _buoyancy_pub{_canard_handle, _param_manager}; // Add this line
 
 	const UavcanDynPubBinder _uavcan_pubs[UAVCAN_PUB_COUNT] {
 #if CONFIG_CYPHAL_GNSS_PUBLISHER

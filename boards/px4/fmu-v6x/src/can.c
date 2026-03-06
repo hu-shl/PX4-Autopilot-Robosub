@@ -37,7 +37,10 @@
  * Board-specific CAN functions.
  */
 
-#if !defined(CONFIG_CAN)
+/* For STM32H7 FDCAN with CONFIG_NET_CAN, the socket interface is handled by NuttX.
+ * Legacy CAN driver code is not needed. */
+
+#if !defined(CONFIG_CAN) || defined(CONFIG_STM32H7_FDCAN1) || defined(CONFIG_STM32H7_FDCAN2)
 
 #include <stdint.h>
 
@@ -68,20 +71,27 @@ uint16_t board_get_can_interfaces(void)
 #include "arm_internal.h"
 
 #include "chip.h"
-#include "stm32_can.h"
 #include "board_config.h"
+
+/* For STM32H7 FDCAN - use the FDCAN header instead of old CAN header */
+#ifdef CONFIG_STM32H7_FDCAN1
+#  include "stm32_fdcan.h"
+#endif
+#ifdef CONFIG_STM32H7_FDCAN2
+#  include "stm32_fdcan.h"
+#endif
 
 /************************************************************************************
  * Pre-processor Definitions
  ************************************************************************************/
 /* Configuration ********************************************************************/
 
-#if defined(CONFIG_STM32_CAN1) && defined(CONFIG_STM32_CAN2)
-#  warning "Both CAN1 and CAN2 are enabled.  Assuming only CAN1."
-#  undef CONFIG_STM32_CAN2
+#if defined(CONFIG_STM32H7_FDCAN1) && defined(CONFIG_STM32H7_FDCAN2)
+#  warning "Both FDCAN1 and FDCAN2 are enabled.  Assuming only FDCAN1."
+#  undef CONFIG_STM32H7_FDCAN2
 #endif
 
-#ifdef CONFIG_STM32_CAN1
+#ifdef CONFIG_STM32H7_FDCAN1
 #  define CAN_PORT 1
 #else
 #  define CAN_PORT 2

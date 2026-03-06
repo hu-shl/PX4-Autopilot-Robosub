@@ -96,3 +96,7 @@ param set-default SENS_EN_INA228 1
 # Battery Measuring Source
 # -> 0 (Power Module, PM02D)
 param set-default BAT1_SOURCE 0
+
+
+# Cyphal DSDL message publish id's
+# ================================================================================

@@ -45,6 +45,7 @@ if(NNVG_PATH)
 	execute_process(COMMAND ${NNVG_PATH} --outdir ${CMAKE_CURRENT_BINARY_DIR}/dsdlc_generated --target-language c -I ${DSDL_DIR}/uavcan ${DSDL_DIR}/reg)
 	execute_process(COMMAND ${NNVG_PATH} --outdir ${CMAKE_CURRENT_BINARY_DIR}/dsdlc_generated --target-language c -I ${LEGACY_DSDL_DIR}/uavcan ${LEGACY_DSDL_DIR}/legacy)
 	execute_process(COMMAND ${NNVG_PATH} --outdir ${CMAKE_CURRENT_BINARY_DIR}/dsdlc_generated --target-language c ${DSDL_DIR}/uavcan)
+	execute_process(COMMAND ${NNVG_PATH} --outdir ${CMAKE_CURRENT_BINARY_DIR}/dsdlc_generated --target-language c -I ${DSDL_DIR}/uavcan ${CMAKE_CURRENT_SOURCE_DIR}/dsdl/robosub)
 else()
 	message(FATAL_ERROR "UAVCAN Nunavut nnvg not found")
 endif()
@@ -125,6 +126,7 @@ px4_add_module(
 		Cyphal.hpp
 		CanardHandle.cpp
 		Publishers/uORB/uorb_publisher.cpp
+		Publishers/Buoyancy/Buoyancy_publisher.cpp
 		Subscribers/uORB/uorb_subscriber.cpp
 		${SRCS}
 		o1heap/o1heap.c
