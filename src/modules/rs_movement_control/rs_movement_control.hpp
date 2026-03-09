@@ -52,6 +52,10 @@
 #include <uORB/topics/vehicle_thrust_setpoint.h>			// for controlling thrust in thruster system
 #include <uORB/topics/buoyancy_control.h>
 
+// Topics to test communication
+#include <uORB/topics/my_custom_topic.h>
+
+
 using namespace time_literals;
 
 
@@ -119,6 +123,9 @@ private:
 	uORB::Publication<vehicle_torque_setpoint_s>	_vehicle_torque_setpoint_pub{ORB_ID(vehicle_torque_setpoint)};
 	uORB::Publication<vehicle_thrust_setpoint_s>	_vehicle_thrust_setpoint_pub{ORB_ID(vehicle_thrust_setpoint)};
 	uORB::Publication<buoyancy_control_s>		_buoyancy_control_pub{ORB_ID(buoyancy_control)};
+
+	// Topics to test publications
+	uORB::Publication<my_custom_topic_s>		_my_custom_topics_pub{ORB_ID(my_custom_topic)};
 
 	// Global topic objects
 	vehicle_control_mode_s	_vehicle_control_mode{};

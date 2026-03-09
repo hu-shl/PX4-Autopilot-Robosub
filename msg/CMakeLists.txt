@@ -267,6 +267,7 @@ set(msg_files
 	# Robosub uORB topics
 	# robosub/exampleTopic.msg
 	robosub/BuoyancyControl.msg
+	robosub/my_custom_topic.msg
 )
 list(SORT msg_files)
 
