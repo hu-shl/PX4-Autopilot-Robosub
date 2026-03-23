@@ -188,6 +188,7 @@ void RS_MovementControl::Run()
        		torqueSetpoint.timestamp_sample = now;
         	thrustSetpoint.timestamp = now;
         	thrustSetpoint.timestamp_sample = now;
+		buoyancyControl.timestamp = now;
 
 		// load data from manual control to output
 		// NED frame

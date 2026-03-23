@@ -140,4 +140,5 @@ void PublicationManager::update()
 	for (auto &dynpub : _dynpublishers) {
 		dynpub->update();
 	}
+	_buoyancy_pub.update();
 }

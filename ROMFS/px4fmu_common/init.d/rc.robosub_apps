@@ -20,3 +20,6 @@ land_detector start multicopter
 # Start Control Allocator
 # Essential: Takes your module's Torque/Thrust output and mixes it to the motors.
 control_allocator start
+
+# Start Cyphal
+cyphal start
