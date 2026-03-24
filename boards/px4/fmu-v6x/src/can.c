@@ -37,7 +37,7 @@
  * Board-specific CAN functions.
  */
 
-#if !defined(CONFIG_CAN) || defined(CONFIG_STM32H7_FDCAN1) || defined(CONFIG_STM32H7_FDCAN2)
+#if !defined(CONFIG_CAN)
 
 #include <stdint.h>
 
@@ -68,32 +68,12 @@ uint16_t board_get_can_interfaces(void)
 #include "arm_internal.h"
 
 #include "chip.h"
-#include "stm32_can.h"
 #include "board_config.h"
-
-/* For STM32H7 FDCAN - use the FDCAN header instead of old CAN header */
-#ifdef CONFIG_STM32H7_FDCAN1
-#  include "stm32_fdcan.h"
-#endif
-#ifdef CONFIG_STM32H7_FDCAN2
-#  include "stm32_fdcan.h"
-#endif
 
 /************************************************************************************
  * Pre-processor Definitions
  ************************************************************************************/
 /* Configuration ********************************************************************/
-
-#if defined(CONFIG_STM32H7_FDCAN1) && defined(CONFIG_STM32H7_FDCAN2)
-#  warning "Both FDCAN1 and FDCAN2 are enabled.  Assuming only FDCAN1."
-#  undef CONFIG_STM32H7_FDCAN2
-#endif
-
-#ifdef CONFIG_STM32H7_FDCAN1
-#  define CAN_PORT 1
-#else
-#  define CAN_PORT 2
-#endif
 
 /************************************************************************************
  * Private Functions
@@ -115,36 +95,7 @@ int can_devinit(void);
 
 int can_devinit(void)
 {
-	static bool initialized = false;
-	struct can_dev_s *can;
-	int ret;
-
-	/* Check if we have already initialized */
-
-	if (!initialized) {
-		/* Call stm32_caninitialize() to get an instance of the CAN interface */
-
-		can = stm32_caninitialize(CAN_PORT);
-
-		if (can == NULL) {
-			canerr("ERROR:  Failed to get CAN interface\n");
-			return -ENODEV;
-		}
-
-		/* Register the CAN driver at "/dev/can0" */
-
-		ret = can_register("/dev/can0", can);
-
-		if (ret < 0) {
-			canerr("ERROR: can_register failed: %d\n", ret);
-			return ret;
-		}
-
-		/* Now we are initialized */
-
-		initialized = true;
-	}
-
+	/* FDCAN is initialized by the socket layer */
 	return OK;
 }
 #endif /* CONFIG_CAN */
