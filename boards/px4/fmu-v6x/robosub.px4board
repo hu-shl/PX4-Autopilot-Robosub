@@ -86,7 +86,7 @@ CONFIG_COMMON_DISTANCE_SENSOR=n				# [SUBJECTTOCHANGE] Not needed for now, maybe
 # ================================================================================
 
 # MOTOR CONTROL
-CONFIG_DRIVERS_DSHOT=n					# [SUBJECTTOCHANGE] PWM is used over D-Shot right now, enable if needed
+CONFIG_DRIVERS_DSHOT=y					# [SUBJECTTOCHANGE] PWM is used over D-Shot right now, enable if needed
 CONFIG_DRIVERS_PWM_OUT=y
 
 # GPS
@@ -132,7 +132,8 @@ CONFIG_MODULES_MC_RATE_CONTROL=n
 
 CONFIG_MODULES_COLLISION_PREVENTION=n
 CONFIG_MODULES_RS_MOVEMENT_CONTROL=y
-
+CONFIG_MODULES_UUV_ATT_CONTROL=y
+CONFIG_MODULES_UUV_POS_CONTROL=y
 
 # NAVIGATION
 CONFIG_MODULES_COMMANDER=y
