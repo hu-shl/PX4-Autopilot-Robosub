@@ -101,3 +101,10 @@ param set-default BAT1_SOURCE 0
 # CAN/DSDL settings
 # ================================================================================
 param set-default UCAN1_PUB_BUOY_ID 0
+
+# geen idee
+if param greater -s CYPHAL_ENABLE 0
+then
+	ifup can0
+	ifup can1
+fi

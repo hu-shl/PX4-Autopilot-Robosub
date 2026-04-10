@@ -217,6 +217,8 @@ void RS_MovementControl::Run()
         	_vehicle_thrust_setpoint_pub.publish(thrustSetpoint);
 		_buoyancy_control_pub.publish(buoyancyControl);
 
+		PX4_INFO("ik ben in RS_MovementControl.cpp Run functie");
+
 
 	perf_end(_loop_perf);
 }

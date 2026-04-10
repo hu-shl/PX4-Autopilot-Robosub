@@ -112,6 +112,7 @@ px4_add_module(
 		-DUINT32_C\(x\)=__UINT32_C\(x\)
 		-O0
 		${DRIVERS_CYPHAL_OPTIONS}
+		-DDEBUG_BUILD
 	INCLUDES
 		${LIBCANARD_DIR}/libcanard/
 		${CMAKE_CURRENT_BINARY_DIR}/dsdlc_generated

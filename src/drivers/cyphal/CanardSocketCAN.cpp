@@ -62,7 +62,7 @@ int CanardSocketCAN::init()
 
 	/* open socket */
 	if ((_fd = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
-		PX4_ERR("socket");
+		PX4_ERR("socket failed: %s", strerror(errno));
 		return -1;
 	}
 

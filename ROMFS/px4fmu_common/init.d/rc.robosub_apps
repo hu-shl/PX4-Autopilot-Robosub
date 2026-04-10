@@ -23,3 +23,6 @@ control_allocator start
 
 # Start Cyphal
 cyphal start
+
+#start your Cyphal Publisher for Buoyancy Control (maybe)
+# Buoyancy_publisher start
