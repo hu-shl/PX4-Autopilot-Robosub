@@ -6,6 +6,8 @@ px4_add_module(
 	SRCS
 		rs_movement_control.cpp
 		rs_movement_control.hpp
+	MODULE_CONFIG
+		rs_movement_control.yaml
 	DEPENDS
 		px4_work_queue
 	)

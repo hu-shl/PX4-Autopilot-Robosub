@@ -15,7 +15,6 @@
 
 # load custom robosub settings from rc.robosub_defaults
 . ${R}etc/init.d/rc.robosub_defaults
-set VEHICLE_TYPE uuv			#Added to start uuv modules in rc.uuv_apps
 # ================================================================================
 # CONTROL ALLOCATION SETTINGS
 # ================================================================================

@@ -11,6 +11,8 @@
 #include <px4_platform_common/defines.h>				// general macro's
 #include <px4_platform_common/module.h>					// Module Base class using CRTP
 #include <px4_platform_common/module_params.h>				// Module parameters functionality
+#include <uORB/topics/parameter_update.h>
+#include <uORB/Subscription.hpp>
 #include <px4_platform_common/posix.h>					// standard POSIX functionality
 #include <px4_platform_common/px4_work_queue/ScheduledWorkItem.hpp>	// workQueue functionality for our module
 
@@ -94,6 +96,16 @@ private:
 
 	void loadParams();	// extra function to handle parameter updates
 
+	void control_manual(const manual_control_setpoint_s &manual, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now);
+	//void control_hold(const manual_control_setpoint_s &manual, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, hrt_abstime now);
+	//void control_offboard();
+
+	void parameters_update();			//functie om custom parameters te maken
+
+	DEFINE_PARAMETERS(
+		(ParamInt<px4::params::RS_X_KP>) _rs_x_kp,
+		(ParamFloat<px4::params::RS_X_KI>) _rs_x_ki
+	)
 
 	// ################################################################################
 	// #	uORB Subscriptions & Publications
@@ -103,6 +115,10 @@ private:
 	// uORB::Subscription _battery_status_sub{ORB_ID(battery_status)};
 	// uORB::Subscription _control_allocator_status_sub{ORB_ID(control_allocator_status)};
 	// uORB::Subscription _vehicle_land_detected_sub{ORB_ID(vehicle_land_detected)};
+
+	// Custom parameters
+	uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
+
 
 	// Setpoints subscriptions
 	uORB::Subscription _vehicle_attitude_setpoint_sub{ORB_ID(vehicle_attitude_setpoint)};

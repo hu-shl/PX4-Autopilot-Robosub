@@ -1,0 +1,24 @@
+module_name: rs_movement_control
+
+parameters:
+    - group: rs_movement_control
+      definitions:
+        RS_X_KP:
+          description:
+            short: Robosub X movement P gain
+            long: test test test
+          type: int32
+          min: 0
+          max: 1000
+          default: 1
+
+
+        RS_X_KI:
+          description:
+            short: Robosub X movement P gain
+            long: test test test
+          type: float
+          min: 0.0
+          max: 1000.0
+          default: 1.0
+

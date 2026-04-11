@@ -162,55 +162,49 @@ void RS_MovementControl::Run()
 	perf_begin(_loop_perf);
 
 	// Check if parameters have changed
-	// if (_parameter_update_sub.updated()) {
+	if (_parameter_update_sub.updated()) {
 	// 	// clear update
-	// 	parameter_update_s param_update;
-	// 	_parameter_update_sub.copy(&param_update);
+	 	parameter_update_s param_update;
+	 	_parameter_update_sub.copy(&param_update);
 
-	// 	// updateParams();
+	 	 updateParams();
 	// 	// loadParams();
-	// }
+	 }
 
 	// create objects to copy data to and from
 	manual_control_setpoint_s manualControlInput;
 	vehicle_thrust_setpoint_s thrustSetpoint;
 	vehicle_torque_setpoint_s torqueSetpoint;
 	buoyancy_control_s	  buoyancyControl;
+	vehicle_status_s	  status;			// to monitor flightmode
 
 	// only run if there is new data in the manual control setpoint topic
 	_manual_control_setpoint_sub.copy(&manualControlInput);
+	_vehicle_status_sub.copy(&status);
+
 
 		// get current time
 		hrt_abstime now = hrt_absolute_time();
 
-		// set timestamp variables
-		torqueSetpoint.timestamp = now;
-       		torqueSetpoint.timestamp_sample = now;
-        	thrustSetpoint.timestamp = now;
-        	thrustSetpoint.timestamp_sample = now;
 
-		// load data from manual control to output
-		// NED frame
-		torqueSetpoint.xyz[0] = 0.f;
-		torqueSetpoint.xyz[1] = manualControlInput.throttle;
-		torqueSetpoint.xyz[2] = manualControlInput.roll;
+	switch (status.nav_state){						// switchcase with logic based on flight mode
 
-		thrustSetpoint.xyz[0] = manualControlInput.pitch;
-		thrustSetpoint.xyz[1] = 0.f;
-		thrustSetpoint.xyz[2] = manualControlInput.yaw;
-
-		//thrustSetpoint.xyz[0] = manualControlInput.pitch;		//thrustsetpoint code Wesse
-		//thrustSetpoint.xyz[1] = manualControlInput.roll;
-		//thrustSetpoint.xyz[2] = manualControlInput.throttle;
+		case vehicle_status_s::NAVIGATION_STATE_MANUAL:			//controller inputs linked to thrusters en buoyancy
+		control_manual(manualControlInput, thrustSetpoint, torqueSetpoint, buoyancyControl, now);
+		break;
 
 
+	case vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER:			// Thruster control in hold mode
+		//pid in for x,y,z, roll, pitch, yaw thrusters
+		//evt later langzame pid voor buoyancy voor Z,roll,pitch
+		break;
 
-		buoyancyControl.tank_command[0] = manualControlInput.roll;
-		buoyancyControl.tank_command[1] = manualControlInput.pitch;
-		buoyancyControl.tank_command[2] = manualControlInput.yaw;
-		buoyancyControl.tank_command[3] = manualControlInput.throttle;
 
-
+	case vehicle_status_s::NAVIGATION_STATE_OFFBOARD:			//Thruster control by ROS2
+		// volledig naar locatie-setpoint luisteren van ROS2.
+		// In dit stuk code zit dus ook code verwerkt.
+	break;
+}
 		// publish the new data
 		_vehicle_torque_setpoint_pub.publish(torqueSetpoint);
         	_vehicle_thrust_setpoint_pub.publish(thrustSetpoint);
@@ -260,3 +254,46 @@ extern "C" __EXPORT int rs_movement_control_main(int argc, char *argv[])
 {
 	return RS_MovementControl::main(argc, argv);
 }
+
+
+void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual, vehicle_thrust_setpoint_s &thrust,
+	 vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now)
+{
+
+// set timestamp variables
+		torque.timestamp = now;
+       		torque.timestamp_sample = now;
+        	thrust.timestamp = now;
+        	thrust.timestamp_sample = now;
+
+
+		// load data from manual control to output
+		// NED frame
+		torque.xyz[0] = 0.f;					//Controller allocation based on rc controller setup
+		torque.xyz[1] = manual.throttle;
+		torque.xyz[2] = manual.roll;
+
+		thrust.xyz[0] = manual.pitch;
+		thrust.xyz[1] = 0.f;
+		thrust.xyz[2] = manual.yaw;
+
+		buoyancy.tank_command[0] = manual.roll;
+		buoyancy.tank_command[1] = manual.pitch;
+		buoyancy.tank_command[2] = manual.yaw;
+		buoyancy.tank_command[3] = manual.throttle;
+
+}
+
+//void RS_MovementControl::control_hold()
+//{
+
+//hold logica
+
+//}
+
+//void RS_MovementControl::control_offboard()
+//{
+
+//offboard logica
+
+//}
