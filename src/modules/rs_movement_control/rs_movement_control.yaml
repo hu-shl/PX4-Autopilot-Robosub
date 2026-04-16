@@ -6,8 +6,8 @@ parameters:
         RS_X_KP:
           description:
             short: Robosub X movement P gain
-            long: test test test
-          type: int32
+            long: Robosub PID control in X direction.
+          type: float
           min: 0
           max: 1000
           default: 1
@@ -15,10 +15,74 @@ parameters:
 
         RS_X_KI:
           description:
-            short: Robosub X movement P gain
-            long: test test test
+            short: Robosub X movement I gain
+            long: Robosub PID control in X direction.
           type: float
           min: 0.0
           max: 1000.0
           default: 1.0
+
+        RS_X_KD:
+          description:
+            short: Robosub X movement D gain
+            long: Robosub PID control in X direction.
+          type: float
+          min: 0.0
+          max: 1000.0
+          default: 1.0
+
+        RS_Y_KP:
+          description:
+            short: Robosub Y movement P gain
+            long: Robosub PID control in Y direction.
+          type: float
+          min: 0.0
+          max: 1000.0
+          default: 1.0
+
+        RS_Y_KI:
+          description:
+            short: Robosub Y movement I gain
+            long: Robosub PID control in Y direction.
+          type: float
+          min: 0.0
+          max: 1000.0
+          default: 1.0
+
+        RS_Y_KD:
+          description:
+            short: Robosub Y movement D gain
+            long: Robosub PID control in Y direction.
+          type: float
+          min: 0.0
+          max: 1000.0
+          default: 1.0
+
+        RS_Z_KP:
+          description:
+            short: Robosub Z movement P gain
+            long: Robosub PID control in Z direction.
+          type: float
+          min: 0.0
+          max: 1000.0
+          default: 1.0
+
+        RS_Z_KI:
+          description:
+            short: Robosub Z movement I gain
+            long: Robosub PID control in Z direction.
+          type: float
+          min: 0.0
+          max: 1000.0
+          default: 1.0
+
+        RS_Z_KD:
+          description:
+            short: Robosub Z movement D gain
+            long: Robosub PID control in Z direction.
+          type: float
+          min: 0.0
+          max: 1000.0
+          default: 1.0
+
 

@@ -97,14 +97,23 @@ private:
 	void loadParams();	// extra function to handle parameter updates
 
 	void control_manual(const manual_control_setpoint_s &manual, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now);
-	//void control_hold(const manual_control_setpoint_s &manual, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, hrt_abstime now);
+	void control_hold(const vehicle_local_position_s &lp, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now);
+
 	//void control_offboard();
 
 	void parameters_update();			//functie om custom parameters te maken
 
 	DEFINE_PARAMETERS(
-		(ParamInt<px4::params::RS_X_KP>) _rs_x_kp,
-		(ParamFloat<px4::params::RS_X_KI>) _rs_x_ki
+		(ParamFloat<px4::params::RS_X_KP>) _rs_x_kp,
+		(ParamFloat<px4::params::RS_X_KI>) _rs_x_ki,
+		(ParamFloat<px4::params::RS_X_KD>) _rs_x_kd,
+		(ParamFloat<px4::params::RS_Y_KP>) _rs_y_kp,
+		(ParamFloat<px4::params::RS_Y_KI>) _rs_y_ki,
+		(ParamFloat<px4::params::RS_Y_KD>) _rs_y_kd,
+		(ParamFloat<px4::params::RS_Z_KP>) _rs_z_kp,
+		(ParamFloat<px4::params::RS_Z_KI>) _rs_z_ki,
+		(ParamFloat<px4::params::RS_Z_KD>) _rs_z_kd
+
 	)
 
 	// ################################################################################
@@ -156,7 +165,29 @@ private:
 	hrt_abstime _last_run{0};			/**< last run time for pid dt calculation*/
 	perf_counter_t	_loop_perf;			/**< loop duration performance counter */
 
+	PID _pid_x;
+	PID _pid_y;
+	PID _pid_z;
 
+	bool _hold_position_set{false};
+	float _hold_x{0.0f};
+	float _hold_y{0.0f};
+	float _hold_z{0.0f};
+
+
+
+
+
+    // Voeg deze toe om de thrust te onthouden tussen de updates:
+    float _last_thrust_x{0.0f};
+    float _last_thrust_y{0.0f};
+    float _last_thrust_z{0.0f};
+
+
+    float _integral_x{0.0f};
+    float _last_error_x{0.0f};
+
+    // Doe dit ook voor Y en Z als je die wilt aansturen
 
 	// ################################################################################
 	// #	Module Parameters

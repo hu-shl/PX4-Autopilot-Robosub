@@ -173,14 +173,16 @@ void RS_MovementControl::Run()
 
 	// create objects to copy data to and from
 	manual_control_setpoint_s manualControlInput;
-	vehicle_thrust_setpoint_s thrustSetpoint;
-	vehicle_torque_setpoint_s torqueSetpoint;
-	buoyancy_control_s	  buoyancyControl;
+	vehicle_local_position_s vehicle_local_position;
+	vehicle_thrust_setpoint_s thrustSetpoint{};
+	vehicle_torque_setpoint_s torqueSetpoint{};
+	buoyancy_control_s	  buoyancyControl{};
 	vehicle_status_s	  status;			// to monitor flightmode
 
 	// only run if there is new data in the manual control setpoint topic
 	_manual_control_setpoint_sub.copy(&manualControlInput);
 	_vehicle_status_sub.copy(&status);
+	_vehicle_local_position_sub.copy(&vehicle_local_position);
 
 
 		// get current time
@@ -189,12 +191,15 @@ void RS_MovementControl::Run()
 
 	switch (status.nav_state){						// switchcase with logic based on flight mode
 
-		case vehicle_status_s::NAVIGATION_STATE_MANUAL:			//controller inputs linked to thrusters en buoyancy
+		case vehicle_status_s::NAVIGATION_STATE_MANUAL:
+		_hold_position_set = false;			//controller inputs linked to thrusters en buoyancy
 		control_manual(manualControlInput, thrustSetpoint, torqueSetpoint, buoyancyControl, now);
 		break;
 
 
-	case vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER:			// Thruster control in hold mode
+	case vehicle_status_s::NAVIGATION_STATE_POSCTL:			// Thruster control in hold mode
+
+		control_hold(vehicle_local_position, thrustSetpoint, torqueSetpoint, buoyancyControl, now);
 		//pid in for x,y,z, roll, pitch, yaw thrusters
 		//evt later langzame pid voor buoyancy voor Z,roll,pitch
 		break;
@@ -284,16 +289,61 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
 
 }
 
-//void RS_MovementControl::control_hold()
-//{
+void RS_MovementControl::control_hold(const vehicle_local_position_s &lp, vehicle_thrust_setpoint_s &thrust,
+vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now)
+{
 
-//hold logica
+    if (!_hold_position_set) {
+        _hold_x = lp.x;
+        _hold_y = lp.y;
+        _hold_z = lp.z;
+        _hold_position_set = true;
+        _last_run = now;
 
-//}
+        // Reset onze eigen variabelen
+        _integral_x = 0.0f;
+        _last_error_x = 0.0f;
+        _last_thrust_x = 0.0f;
 
-//void RS_MovementControl::control_offboard()
-//{
+        PX4_INFO("Custom PID Hold Start");
+    }
 
-//offboard logica
+    float dt = (now - _last_run) / 1e6f;
 
-//}
+    if (dt > 0.999f) {
+        // 1. Bereken de fout
+        float error_x = _hold_x - lp.x;
+
+        // 2. Proportional (P)
+        float P_out = _rs_x_kp.get() * error_x;
+
+        // 3. Integral (I) - alleen als de gain niet 0 is
+        _integral_x += error_x * dt;
+
+        // Anti-windup: beperk de integraal zodat de drone niet 'doorvliegt'
+        _integral_x = math::constrain(_integral_x, -0.5f, 0.5f);
+        float I_out = _rs_x_ki.get() * _integral_x;
+
+        // 4. Derivative (D)
+        float derivative = (error_x - _last_error_x) / dt;
+        float D_out = _rs_x_kd.get() * derivative;
+
+        // 5. Totaal en Limitering
+        _last_thrust_x = P_out + I_out + D_out;
+        _last_thrust_x = math::constrain(_last_thrust_x, -1.0f, 1.0f);
+
+        // Update geschiedenis voor de volgende seconde
+        _last_error_x = error_x;
+        _last_run = now;
+
+        PX4_INFO("Custom PID -> Err: %.2f | P_out: %.2f | Total: %.2f",
+                  (double)error_x, (double)P_out, (double)_last_thrust_x);
+    }
+
+    // Output naar de motoren (altijd doorsturen)
+    thrust.xyz[0] = _last_thrust_x;
+    thrust.timestamp = now;
+    // ... rest van je torque/buoyancy code
+
+
+}
