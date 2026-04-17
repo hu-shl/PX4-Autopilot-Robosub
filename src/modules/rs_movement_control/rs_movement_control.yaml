@@ -85,4 +85,14 @@ parameters:
           max: 1000.0
           default: 1.0
 
+        RS_MAN_MODE:
+          description:
+            short: Robosub manual thruster/arm/buoyancy
+            long: Robosub manual thrusters, arm or buoyancy. 0 = buoyancy, 1 = Thrusters, 2 = Arm
+          type: float
+          default: 0
+
+
+
+
 

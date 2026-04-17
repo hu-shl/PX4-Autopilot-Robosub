@@ -271,79 +271,79 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
         	thrust.timestamp = now;
         	thrust.timestamp_sample = now;
 
+		float manual_mode_float = _rs_man_mode.get();
+		int manual_mode = (int)(manual_mode_float + 0.5f);
 
+		thrust.xyz[0] = 0.f; thrust.xyz[1] = 0.f; thrust.xyz[2] = 0.f;
+   		torque.xyz[0] = 0.f; torque.xyz[1] = 0.f; torque.xyz[2] = 0.f;
+    		for(int i=0; i<4; i++) buoyancy.tank_command[i] = 0.f;
 		// load data from manual control to output
 		// NED frame
-		torque.xyz[0] = 0.f;					//Controller allocation based on rc controller setup
-		torque.xyz[1] = manual.throttle;
-		torque.xyz[2] = manual.roll;
 
-		thrust.xyz[0] = manual.pitch;
-		thrust.xyz[1] = 0.f;
-		thrust.xyz[2] = manual.yaw;
+		switch(manual_mode){
 
-		buoyancy.tank_command[0] = manual.roll;
-		buoyancy.tank_command[1] = manual.pitch;
-		buoyancy.tank_command[2] = manual.yaw;
-		buoyancy.tank_command[3] = manual.throttle;
+			case 0:
+			buoyancy.tank_command[0] = manual.roll;
+			buoyancy.tank_command[1] = manual.pitch;
+			buoyancy.tank_command[2] = manual.yaw;
+			buoyancy.tank_command[3] = manual.throttle;
+			PX4_INFO("buoyancy mode: %d", manual_mode);
+			break;
+
+			case 1:
+			torque.xyz[0] = 0.f;					//Controller allocation based on rc controller setup
+			torque.xyz[1] = manual.pitch;
+			torque.xyz[2] = manual.yaw;
+
+			thrust.xyz[0] = manual.throttle;
+			thrust.xyz[1] = 0.f;
+			thrust.xyz[2] = manual.roll;
+			PX4_INFO("thrusters mode: %d", manual_mode);
+			break;
+
+			case 2:
+			// iets met de arm handmatig sturen net als buoyancy
+			PX4_INFO("arm mode: %d", manual_mode);
+
+		}
+
 
 }
 
 void RS_MovementControl::control_hold(const vehicle_local_position_s &lp, vehicle_thrust_setpoint_s &thrust,
 vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now)
 {
-
     if (!_hold_position_set) {
         _hold_x = lp.x;
         _hold_y = lp.y;
         _hold_z = lp.z;
+
+	_pid_x.reset();
+	_pid_y.reset();
+	_pid_z.reset();
+
         _hold_position_set = true;
         _last_run = now;
-
-        // Reset onze eigen variabelen
-        _integral_x = 0.0f;
-        _last_error_x = 0.0f;
-        _last_thrust_x = 0.0f;
 
         PX4_INFO("Custom PID Hold Start");
     }
 
     float dt = (now - _last_run) / 1e6f;
 
-    if (dt > 0.999f) {
-        // 1. Bereken de fout
-        float error_x = _hold_x - lp.x;
+    if (dt > 0.099f) {
 
-        // 2. Proportional (P)
-        float P_out = _rs_x_kp.get() * error_x;
+	_pid_x.update(_rs_x_kp.get(), _rs_x_ki.get(), _rs_x_kd.get(), _hold_x, lp.x, dt);
 
-        // 3. Integral (I) - alleen als de gain niet 0 is
-        _integral_x += error_x * dt;
+	_pid_y.update(_rs_y_kp.get(), _rs_y_ki.get(), _rs_y_kd.get(), _hold_y, lp.y, dt);
 
-        // Anti-windup: beperk de integraal zodat de drone niet 'doorvliegt'
-        _integral_x = math::constrain(_integral_x, -0.5f, 0.5f);
-        float I_out = _rs_x_ki.get() * _integral_x;
+	_pid_z.update(_rs_z_kp.get(), _rs_z_ki.get(), _rs_z_kd.get(), _hold_z, lp.z, dt);
 
-        // 4. Derivative (D)
-        float derivative = (error_x - _last_error_x) / dt;
-        float D_out = _rs_x_kd.get() * derivative;
-
-        // 5. Totaal en Limitering
-        _last_thrust_x = P_out + I_out + D_out;
-        _last_thrust_x = math::constrain(_last_thrust_x, -1.0f, 1.0f);
-
-        // Update geschiedenis voor de volgende seconde
-        _last_error_x = error_x;
         _last_run = now;
 
-        PX4_INFO("Custom PID -> Err: %.2f | P_out: %.2f | Total: %.2f",
-                  (double)error_x, (double)P_out, (double)_last_thrust_x);
+        PX4_INFO("Hold Active - X_Err: %.2f | X_Thrust: %.2f", (double)(_hold_x - lp.x), (double)thrust.xyz[0]);
     }
-
-    // Output naar de motoren (altijd doorsturen)
-    thrust.xyz[0] = _last_thrust_x;
+    thrust.xyz[0] = _pid_x.get_output();
+    thrust.xyz[1] = _pid_y.get_output();
+    thrust.xyz[2] = _pid_z.get_output();
     thrust.timestamp = now;
-    // ... rest van je torque/buoyancy code
-
-
 }

@@ -23,7 +23,8 @@
 #include <lib/pid/PID.hpp>						// PID functionality
 #include <lib/matrix/matrix/math.hpp>					// matrix library
 #include <lib/perf/perf_counter.h>					// performance counters for top command
-#include <lib/systemlib/mavlink_log.h>					// MAVLink logging
+#include <lib/systemlib/mavlink_log.h>
+#include <mathlib/math/Functions.hpp>					// MAVLink logging
 
 // uORB pub&sub stuff
 #include <uORB/Publication.hpp>						// uORB publication functionality
@@ -64,6 +65,48 @@ using namespace time_literals;
 // ################################################################################
 // #	Task Class
 // ################################################################################
+class RS_PID {
+public:
+	RS_PID(float limit = 1.0f) : _limit(limit) {}
+
+	void update(float kp, float ki, float kd, float setpoint, float current_value, float dt){
+	if (dt <= 0.0f) return;
+
+	float error = setpoint - current_value;
+
+	float p_out = kp * error;
+
+	_integral += error * dt;
+	_integral = math::constrain(_integral, -0.5f, 0.5f);
+	float i_out = ki * _integral;
+
+	float derivative = (error - _last_error) / dt;
+	float d_out = kd * derivative;
+
+	float total = p_out + i_out + d_out;
+	_last_output = math::constrain(total, -_limit, _limit);
+
+	_last_error = error;
+	}
+
+	float get_output() const { return _last_output; }
+
+	void reset(){
+		_integral = 0.0f;
+		_last_error = 0.0f;
+		_last_output = 0.0f;
+	}
+
+private:
+	float _limit;
+	float _integral{0.0f};
+	float _last_error{0.0f};
+	float _last_output{0.0f};
+
+
+};
+
+
 
 class RS_MovementControl : public ModuleBase<RS_MovementControl>, public ModuleParams, public px4::WorkItem
 {
@@ -112,7 +155,8 @@ private:
 		(ParamFloat<px4::params::RS_Y_KD>) _rs_y_kd,
 		(ParamFloat<px4::params::RS_Z_KP>) _rs_z_kp,
 		(ParamFloat<px4::params::RS_Z_KI>) _rs_z_ki,
-		(ParamFloat<px4::params::RS_Z_KD>) _rs_z_kd
+		(ParamFloat<px4::params::RS_Z_KD>) _rs_z_kd,
+		(ParamFloat<px4::params::RS_MAN_MODE>) _rs_man_mode
 
 	)
 
@@ -165,29 +209,15 @@ private:
 	hrt_abstime _last_run{0};			/**< last run time for pid dt calculation*/
 	perf_counter_t	_loop_perf;			/**< loop duration performance counter */
 
-	PID _pid_x;
-	PID _pid_y;
-	PID _pid_z;
+	RS_PID _pid_x{1.0f}; // Limit op 1.0 thrust
+	RS_PID _pid_y{1.0f};
+	RS_PID _pid_z{1.0f};
 
 	bool _hold_position_set{false};
 	float _hold_x{0.0f};
 	float _hold_y{0.0f};
 	float _hold_z{0.0f};
 
-
-
-
-
-    // Voeg deze toe om de thrust te onthouden tussen de updates:
-    float _last_thrust_x{0.0f};
-    float _last_thrust_y{0.0f};
-    float _last_thrust_z{0.0f};
-
-
-    float _integral_x{0.0f};
-    float _last_error_x{0.0f};
-
-    // Doe dit ook voor Y en Z als je die wilt aansturen
 
 	// ################################################################################
 	// #	Module Parameters
