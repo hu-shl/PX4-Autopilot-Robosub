@@ -95,7 +95,7 @@ CONFIG_DRIVERS_GPIO_MCP23009=n				# No I/O Expander is present on the baseboard 
 CONFIG_DRIVERS_GPS=n					# [SUBJECTTOCHANGE] We may need to enable GPS to keep EKF2 happy
 
 # UAVCAN
-CONFIG_DRIVERS_UAVCAN=y
+CONFIG_DRIVERS_UAVCAN=n
 
 # ETC
 CONFIG_COMMON_LIGHT=y
