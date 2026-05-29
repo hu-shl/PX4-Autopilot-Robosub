@@ -274,10 +274,13 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
         	thrust.timestamp = now;
         	thrust.timestamp_sample = now;
 
-		float manual_mode_float = _rs_man_mode.get();
-		int manual_mode = (int)(manual_mode_float + 0.5f);
+		float manual_mode_float = manual.aux1;
+		if (manual_mode_float < 0) manual_mode_float -= 0.5f;		// round to nearest int
+		else manual_mode_float += 0.5f;
+		int manual_mode = (int)(manual_mode_float);
 
 		// int manual_mode = _rc_map_param1.get();
+		PX4_INFO("manual mode: %d", manual_mode);
 
 		thrust.xyz[0] = 0.f; thrust.xyz[1] = 0.f; thrust.xyz[2] = 0.f;
    		torque.xyz[0] = 0.f; torque.xyz[1] = 0.f; torque.xyz[2] = 0.f;
@@ -311,7 +314,7 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
 			PX4_INFO("thrusters mode: %d", manual_mode);
 			break;
 
-			case 2:
+			case -1:
 			arm.servo_command[0] = manual.roll;
 			arm.servo_command[1] = manual.pitch;
 			arm.servo_command[2] = manual.yaw;
