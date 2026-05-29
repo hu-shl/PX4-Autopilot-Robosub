@@ -293,6 +293,10 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
 			buoyancy.tank_command[1] = manual.pitch;
 			buoyancy.tank_command[2] = manual.yaw;
 			buoyancy.tank_command[3] = manual.throttle;
+			buoyancy.tank_command[4] = manual.aux3;
+			buoyancy.tank_command[5] = manual.aux4;
+			buoyancy.tank_command[6] = manual.aux5;
+			buoyancy.tank_command[7] = manual.aux6;
 			PX4_INFO("buoyancy mode: %d", manual_mode);
 			break;
 
