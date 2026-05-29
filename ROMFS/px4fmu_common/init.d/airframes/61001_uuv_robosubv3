@@ -48,16 +48,16 @@ param set-default CA_R_REV 255
 
 # --- THRUSTER 1 --- (3D printed thruster, Front-Left)
 # Position
-param set-default CA_ROTOR0_PX 0.26   # 21cm  forward
-param set-default CA_ROTOR0_PY -0.145    # 8cm   left
-param set-default CA_ROTOR0_PZ -0.184     # 6cm   down
+param set-default CA_ROTOR0_PX 0.26   # 26cm  forward
+param set-default CA_ROTOR0_PY -0.145    # 14.5cm   left
+param set-default CA_ROTOR0_PZ -0.184     # 18.4cm   up
 # Axis
 param set-default CA_ROTOR0_AX 0.0
-param set-default CA_ROTOR0_AY 0.0      # Thrust Upward
-param set-default CA_ROTOR0_AZ 1.0
+param set-default CA_ROTOR0_AY 0.0
+param set-default CA_ROTOR0_AZ 1.0 #Thrust down
 # Coefficients
 param set-default CA_ROTOR0_KM 0.0
-param set-default CA_ROTOR0_CT 25      # Thrust of 7,5N at 100%
+param set-default CA_ROTOR0_CT 25      # Thrust of 25N at 100%
 
 # --- THRUSTER 2 --- (3D printed thruster, Front-Right)
 # Position

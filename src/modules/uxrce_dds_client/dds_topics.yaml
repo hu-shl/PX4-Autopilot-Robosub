@@ -80,6 +80,9 @@ publications:
   - topic: /fmu/out/home_position
     type: px4_msgs::msg::HomePosition
 
+  - topic: /fmu/out/buoyancy_control
+    type: px4_msgs::msg::BuoyancyControl
+
 # Create uORB::Publication
 subscriptions:
   - topic: /fmu/in/register_ext_component_request
@@ -162,6 +165,9 @@ subscriptions:
 
   - topic: /fmu/in/aux_global_position
     type: px4_msgs::msg::VehicleGlobalPosition
+
+  - topic: /fmu/in/buoyancy_control
+    type: px4_msgs::msg::BuoyancyControl
 
 # Create uORB::PublicationMulti
 subscriptions_multi:
