@@ -157,8 +157,7 @@ private:
 		(ParamFloat<px4::params::RS_Z_KP>) _rs_z_kp,
 		(ParamFloat<px4::params::RS_Z_KI>) _rs_z_ki,
 		(ParamFloat<px4::params::RS_Z_KD>) _rs_z_kd,
-		(ParamFloat<px4::params::RS_MAN_MODE>) _rs_man_mode,
-		(ParamInt<px4::params::RC_MAP_PARAM1>) _rc_map_param1
+		(ParamFloat<px4::params::RS_MAN_MODE>) _rs_man_mode
 
 	)
 
