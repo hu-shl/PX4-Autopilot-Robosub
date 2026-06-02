@@ -38,6 +38,7 @@
 #include <mathlib/math/Limits.hpp>
 #include <mathlib/math/Functions.hpp>
 #include <px4_platform_common/events.h>
+#include <systemlib/mavlink_log.h>
 
 using namespace matrix;
 using namespace time_literals;
@@ -153,6 +154,9 @@ void RS_MovementControl::loadParams()
  */
 void RS_MovementControl::Run()
 {
+	orb_advert_t mavlink_log_pub = nullptr;
+
+        mavlink_log_info(&mavlink_log_pub, "hai");
 	// Check if this module should still exist
 	if (should_exit()) {
 		exit_and_cleanup();

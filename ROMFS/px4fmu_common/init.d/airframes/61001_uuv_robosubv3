@@ -54,7 +54,7 @@ param set-default CA_ROTOR0_PZ -0.184     # 18.4cm   up
 # Axis
 param set-default CA_ROTOR0_AX 0.0
 param set-default CA_ROTOR0_AY 0.0
-param set-default CA_ROTOR0_AZ 1.0 #Thrust down
+param set-default CA_ROTOR0_AZ -1.0 #Thrust down
 # Coefficients
 param set-default CA_ROTOR0_KM 0.0
 param set-default CA_ROTOR0_CT 25      # Thrust of 25N at 100%
@@ -67,7 +67,7 @@ param set-default CA_ROTOR1_PZ -0.184
 # Axis
 param set-default CA_ROTOR1_AX 0.0
 param set-default CA_ROTOR1_AY 0.0      # Thrust Upward
-param set-default CA_ROTOR1_AZ 1.0
+param set-default CA_ROTOR1_AZ -1.0
 # Coefficients
 param set-default CA_ROTOR1_KM 0.0
 param set-default CA_ROTOR1_CT 25
@@ -91,7 +91,7 @@ param set-default CA_ROTOR3_PX 0.0
 param set-default CA_ROTOR3_PY -0.172
 param set-default CA_ROTOR3_PZ 0.0
 # Axis
-param set-default CA_ROTOR3_AX 1.0
+param set-default CA_ROTOR3_AX -1.0
 param set-default CA_ROTOR3_AY 0.0      # Thrust Forward
 param set-default CA_ROTOR3_AZ 0.0
 # Coefficients
@@ -132,7 +132,7 @@ param set-default CA_ROTOR6_PZ -0.184
 # Axis
 param set-default CA_ROTOR6_AX 0.0
 param set-default CA_ROTOR6_AY 0.0      # Thrust Upward
-param set-default CA_ROTOR6_AZ 1.0
+param set-default CA_ROTOR6_AZ -1.0
 # Coefficients
 param set-default CA_ROTOR6_KM 0.0
 param set-default CA_ROTOR6_CT 25
@@ -146,7 +146,7 @@ param set-default CA_ROTOR6_CT 25
  # Axis
  param set-default CA_ROTOR7_AX 0.0
  param set-default CA_ROTOR7_AY 0.0      # Thrust Upward
- param set-default CA_ROTOR7_AZ 1.0
+ param set-default CA_ROTOR7_AZ -1.0
  # Coefficients
  param set-default CA_ROTOR7_KM 0.0
  param set-default CA_ROTOR7_CT 25
