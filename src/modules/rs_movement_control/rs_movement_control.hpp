@@ -50,10 +50,11 @@
 #include <uORB/topics/vehicle_attitude.h>				// attitude
 #include <uORB/topics/vehicle_local_position.h>				// position, velocity and acceleration
 
-// Thruster & Buoyancy control outputs
+// Thruster & Buoyancy control outputs & arm control
 #include <uORB/topics/vehicle_torque_setpoint.h>			// for controlling torque in thruster system
 #include <uORB/topics/vehicle_thrust_setpoint.h>			// for controlling thrust in thruster system
 #include <uORB/topics/buoyancy_control.h>
+#include <uORB/topics/arm_control.h>
 
 // Topics to test communication
 #include <uORB/topics/my_custom_topic.h>
@@ -139,7 +140,7 @@ private:
 
 	void loadParams();	// extra function to handle parameter updates
 
-	void control_manual(const manual_control_setpoint_s &manual, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now);
+	void control_manual(const manual_control_setpoint_s &manual, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, arm_control_s &arm, hrt_abstime now);
 	void control_hold(const vehicle_local_position_s &lp, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now);
 
 	//void control_offboard();
@@ -192,6 +193,7 @@ private:
 	uORB::Publication<vehicle_torque_setpoint_s>	_vehicle_torque_setpoint_pub{ORB_ID(vehicle_torque_setpoint)};
 	uORB::Publication<vehicle_thrust_setpoint_s>	_vehicle_thrust_setpoint_pub{ORB_ID(vehicle_thrust_setpoint)};
 	uORB::Publication<buoyancy_control_s>		_buoyancy_control_pub{ORB_ID(buoyancy_control)};
+	uORB::Publication<arm_control_s>			_arm_control_pub{ORB_ID(arm_control)};
 
 	// Topics to test publications
 	uORB::Publication<my_custom_topic_s>		_my_custom_topics_pub{ORB_ID(my_custom_topic)};

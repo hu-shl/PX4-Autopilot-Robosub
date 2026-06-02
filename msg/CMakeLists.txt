@@ -47,7 +47,9 @@ set(msg_files
 	AdcReport.msg
 	Airspeed.msg
 	AirspeedWind.msg
+	ArmControl.msg
 	AutotuneAttitudeControlStatus.msg
+	BuoyancyControl.msg
 	ButtonEvent.msg
 	CameraCapture.msg
 	CameraStatus.msg
@@ -266,7 +268,7 @@ set(msg_files
 
 	# Robosub uORB topics
 	# robosub/exampleTopic.msg
-	robosub/BuoyancyControl.msg
+	# robosub/BuoyancyControl.msg
 	robosub/my_custom_topic.msg
 )
 list(SORT msg_files)

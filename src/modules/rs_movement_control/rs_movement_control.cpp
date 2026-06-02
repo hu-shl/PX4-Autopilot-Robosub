@@ -128,6 +128,7 @@ bool RS_MovementControl::init()
 	_vehicle_torque_setpoint_pub.advertise();
 	_vehicle_thrust_setpoint_pub.advertise();
 	_buoyancy_control_pub.advertise();
+	_arm_control_pub.advertise();
 
 	return true;
 }
@@ -177,6 +178,7 @@ void RS_MovementControl::Run()
 	vehicle_thrust_setpoint_s thrustSetpoint{};
 	vehicle_torque_setpoint_s torqueSetpoint{};
 	buoyancy_control_s	  buoyancyControl{};
+	arm_control_s		  armControl{};
 	vehicle_status_s	  status;			// to monitor flightmode
 
 	// only run if there is new data in the manual control setpoint topic
@@ -193,7 +195,7 @@ void RS_MovementControl::Run()
 
 		case vehicle_status_s::NAVIGATION_STATE_MANUAL:
 		_hold_position_set = false;			//controller inputs linked to thrusters en buoyancy
-		control_manual(manualControlInput, thrustSetpoint, torqueSetpoint, buoyancyControl, now);
+		control_manual(manualControlInput, thrustSetpoint, torqueSetpoint, buoyancyControl, armControl, now);
 		break;
 
 
@@ -214,6 +216,7 @@ void RS_MovementControl::Run()
 		_vehicle_torque_setpoint_pub.publish(torqueSetpoint);
         	_vehicle_thrust_setpoint_pub.publish(thrustSetpoint);
 		_buoyancy_control_pub.publish(buoyancyControl);
+		_arm_control_pub.publish(armControl);
 
 
 	perf_end(_loop_perf);
@@ -262,7 +265,7 @@ extern "C" __EXPORT int rs_movement_control_main(int argc, char *argv[])
 
 
 void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual, vehicle_thrust_setpoint_s &thrust,
-	 vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now)
+	 vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, arm_control_s &arm, hrt_abstime now)
 {
 
 // set timestamp variables
@@ -271,12 +274,19 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
         	thrust.timestamp = now;
         	thrust.timestamp_sample = now;
 
+		// float manual_mode_float = manual.aux1;
+		// if (manual_mode_float < 0) manual_mode_float -= 0.5f;		// round to nearest int
+		// else manual_mode_float += 0.5f;
+		// int manual_mode = (int)(manual_mode_float);
+
 		float manual_mode_float = _rs_man_mode.get();
 		int manual_mode = (int)(manual_mode_float + 0.5f);
+		PX4_INFO("manual mode: %d", manual_mode);
 
 		thrust.xyz[0] = 0.f; thrust.xyz[1] = 0.f; thrust.xyz[2] = 0.f;
    		torque.xyz[0] = 0.f; torque.xyz[1] = 0.f; torque.xyz[2] = 0.f;
     		for(int i=0; i<4; i++) buoyancy.tank_command[i] = 0.f;
+		for(int j=0; j<6; j++) arm.servo_command[j] = 0.f;
 		// load data from manual control to output
 		// NED frame
 
@@ -287,6 +297,10 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
 			buoyancy.tank_command[1] = manual.pitch;
 			buoyancy.tank_command[2] = manual.yaw;
 			buoyancy.tank_command[3] = manual.throttle;
+			buoyancy.tank_command[4] = manual.aux3;
+			buoyancy.tank_command[5] = manual.aux4;
+			buoyancy.tank_command[6] = manual.aux5;
+			buoyancy.tank_command[7] = manual.aux6;
 			PX4_INFO("buoyancy mode: %d", manual_mode);
 			break;
 
@@ -302,7 +316,14 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
 			break;
 
 			case 2:
-			// iets met de arm handmatig sturen net als buoyancy
+			arm.servo_command[0] = manual.roll;
+			arm.servo_command[1] = manual.pitch;
+			arm.servo_command[2] = manual.yaw;
+			arm.servo_command[3] = manual.throttle;
+			arm.servo_command[4] = manual.aux3;
+			arm.servo_command[5] = manual.aux4;
+			arm.servo_command[6] = manual.aux5;
+			arm.servo_command[7] = manual.aux6;
 			PX4_INFO("arm mode: %d", manual_mode);
 
 		}

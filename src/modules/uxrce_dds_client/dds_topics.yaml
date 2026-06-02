@@ -80,6 +80,9 @@ publications:
   - topic: /fmu/out/home_position
     type: px4_msgs::msg::HomePosition
 
+  - topic: /fmu/out/arm_control
+    type: px4_msgs::msg::ArmControl
+
   - topic: /fmu/out/buoyancy_control
     type: px4_msgs::msg::BuoyancyControl
 
