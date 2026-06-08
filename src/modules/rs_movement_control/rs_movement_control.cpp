@@ -125,6 +125,11 @@ bool RS_MovementControl::init()
 		return false;
 	}
 
+	if(!_vehicle_health_sub.registerCallback()) {
+		PX4_ERR("callback registration failed");
+		return false;
+	}
+
 	// advertise to be published topics
 	_vehicle_torque_setpoint_pub.advertise();
 	_vehicle_thrust_setpoint_pub.advertise();
@@ -154,9 +159,7 @@ void RS_MovementControl::loadParams()
  */
 void RS_MovementControl::Run()
 {
-	orb_advert_t mavlink_log_pub = nullptr;
 
-        mavlink_log_info(&mavlink_log_pub, "hai");
 	// Check if this module should still exist
 	if (should_exit()) {
 		exit_and_cleanup();
@@ -184,13 +187,21 @@ void RS_MovementControl::Run()
 	buoyancy_control_s	  buoyancyControl{};
 	arm_control_s		  armControl{};
 	vehicle_status_s	  status;			// to monitor flightmode
+	vehicle_health_s	  vehicleHealth{};
+	jetson_control_s	  jetsonControl{};		// to monitor health status of the vehicle
 
 	// only run if there is new data in the manual control setpoint topic
 	_manual_control_setpoint_sub.copy(&manualControlInput);
 	_vehicle_status_sub.copy(&status);
 	_vehicle_local_position_sub.copy(&vehicle_local_position);
 
+	_vehicle_health_sub.copy(&vehicleHealth);
+	_jetson_control_sub.copy(&jetsonControl);
 
+	orb_advert_t mavlink_log_pub = nullptr;
+	if (vehicleHealth.battery[0] > 50.0f) {
+		mavlink_log_info(&mavlink_log_pub, "temp battery high!: %f", static_cast<double>(vehicleHealth.battery[0]));
+	}
 		// get current time
 		hrt_abstime now = hrt_absolute_time();
 
@@ -211,7 +222,7 @@ void RS_MovementControl::Run()
 		break;
 
 
-	case vehicle_status_s::NAVIGATION_STATE_OFFBOARD:			//Thruster control by ROS2
+	case vehicle_status_s::NAVIGATION_STATE_ACRO:			//Thruster control by ROS2
 		// volledig naar locatie-setpoint luisteren van ROS2.
 		// In dit stuk code zit dus ook code verwerkt.
 	break;
@@ -278,13 +289,13 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
         	thrust.timestamp = now;
         	thrust.timestamp_sample = now;
 
-		// float manual_mode_float = manual.aux1;
+		float manual_mode_float = manual.aux1;
 		// if (manual_mode_float < 0) manual_mode_float -= 0.5f;		// round to nearest int
 		// else manual_mode_float += 0.5f;
 		// int manual_mode = (int)(manual_mode_float);
 
-		float manual_mode_float = _rs_man_mode.get();
-		int manual_mode = (int)(manual_mode_float + 0.5f);
+		//float manual_mode_float = _rs_man_mode.get();
+		int manual_mode = (int)lroundf(manual_mode_float);
 		PX4_INFO("manual mode: %d", manual_mode);
 
 		thrust.xyz[0] = 0.f; thrust.xyz[1] = 0.f; thrust.xyz[2] = 0.f;
@@ -296,7 +307,7 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
 
 		switch(manual_mode){
 
-			case 0:
+			case -1:
 			buoyancy.tank_command[0] = manual.roll;
 			buoyancy.tank_command[1] = manual.pitch;
 			buoyancy.tank_command[2] = manual.yaw;
@@ -308,18 +319,18 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
 			PX4_INFO("buoyancy mode: %d", manual_mode);
 			break;
 
-			case 1:
-			torque.xyz[0] = 0.f;					//Controller allocation based on rc controller setup
+			case 0:
+			torque.xyz[0] = manual.aux4;					//Controller allocation based on rc controller setup
 			torque.xyz[1] = manual.pitch;
-			torque.xyz[2] = manual.yaw;
+			torque.xyz[2] = manual.roll * 0.2f;
 
 			thrust.xyz[0] = manual.throttle;
 			thrust.xyz[1] = 0.f;
-			thrust.xyz[2] = manual.roll;
+			thrust.xyz[2] = manual.yaw * 0.6f;
 			PX4_INFO("thrusters mode: %d", manual_mode);
 			break;
 
-			case 2:
+			case 1:
 			arm.servo_command[0] = manual.roll;
 			arm.servo_command[1] = manual.pitch;
 			arm.servo_command[2] = manual.yaw;

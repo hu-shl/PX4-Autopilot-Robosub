@@ -86,6 +86,13 @@ publications:
   - topic: /fmu/out/buoyancy_control
     type: px4_msgs::msg::BuoyancyControl
 
+  - topic: /fmu/out/vehicle_health
+    type: px4_msgs::msg::VehicleHealth
+
+  - topic: /fmu/out/jetson_control
+    type: px4_msgs::msg::JetsonControl
+
+
 # Create uORB::Publication
 subscriptions:
   - topic: /fmu/in/register_ext_component_request
@@ -171,6 +178,9 @@ subscriptions:
 
   - topic: /fmu/in/buoyancy_control
     type: px4_msgs::msg::BuoyancyControl
+
+  - topic: /fmu/in/jetson_control
+    type: px4_msgs::msg::JetsonControl
 
 # Create uORB::PublicationMulti
 subscriptions_multi:

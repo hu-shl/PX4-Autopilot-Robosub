@@ -4,6 +4,9 @@
 #
 # Custom Control Stack for 6DOF Sub
 
+# Repair init ina226 driver
+ina226 stop
+ina226 start -X -b 1 -a 0x40 -t 1
 
 # Start Flight Mode Manager
 # Essential: This module reads the RC sticks (Manual) or Mission waypoints (Auto)

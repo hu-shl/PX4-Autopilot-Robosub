@@ -39,11 +39,13 @@
 
 // Setpoints
 #include <uORB/topics/vehicle_attitude_setpoint.h>			// contains thrust and attitude setpoints
-#include <uORB/topics/manual_control_setpoint.h>			// manual control inputs
+#include <uORB/topics/manual_control_setpoint.h>
+#include <uORB/topics/jetson_control.h>			// manual control inputs
 
 // Vehicle status
 #include <uORB/topics/vehicle_status.h>					// vehicle status for arming state
 #include <uORB/topics/vehicle_control_mode.h>				// vehicle control mode for checking
+#include <uORB/topics/vehicle_health.h>					// vehicle health for checking
 
 // Sensor EKF subscriptions
 #include <uORB/topics/vehicle_angular_velocity.h>			// attitude rates
@@ -142,8 +144,8 @@ private:
 
 	void control_manual(const manual_control_setpoint_s &manual, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, arm_control_s &arm, hrt_abstime now);
 	void control_hold(const vehicle_local_position_s &lp, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now);
+	void control_jetson(const vehicle_local_position_s &lp, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, hrt_abstime now);
 
-	//void control_offboard();
 
 	void parameters_update();			//functie om custom parameters te maken
 
@@ -181,6 +183,8 @@ private:
 	// Vehicle status subscriptions
 	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};
 	uORB::Subscription _vehicle_control_mode_sub{ORB_ID(vehicle_control_mode)};
+	uORB::Subscription _jetson_control_sub{ORB_ID(jetson_control)};			// to monitor health status of the vehicle
+	uORB::SubscriptionCallbackWorkItem _vehicle_health_sub{this, ORB_ID(vehicle_health)};
 
 	// Sensor EKF subscriptions
 	uORB::Subscription _vehicle_angular_velocity_sub{ORB_ID(vehicle_angular_velocity)};
@@ -201,7 +205,8 @@ private:
 	// Global topic objects
 	vehicle_control_mode_s	_vehicle_control_mode{};
 	vehicle_status_s	_vehicle_status{};
-
+	vehicle_health_s	_vehicle_health{};
+	jetson_control_s	_jetson_control{};
 
 
 	// ################################################################################
