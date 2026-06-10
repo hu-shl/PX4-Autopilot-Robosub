@@ -182,7 +182,7 @@ void RS_MovementControl::Run()
 	// create objects to copy data to and from
 	manual_control_setpoint_s manualControlInput;
 	vehicle_local_position_s vehicle_local_position;
-	// vehicle_visual_odometry_s vehicle_visual_odometry;
+	vehicle_odometry_s vehicle_odo_data;
 	vehicle_thrust_setpoint_s thrustSetpoint{};
 	vehicle_torque_setpoint_s torqueSetpoint{};
 	buoyancy_control_s	  buoyancyControl{};
@@ -195,7 +195,7 @@ void RS_MovementControl::Run()
 	_manual_control_setpoint_sub.copy(&manualControlInput);
 	_vehicle_status_sub.copy(&status);
 	_vehicle_local_position_sub.copy(&vehicle_local_position);
-	// _vehicle_visual_odometry_sub.copy(&vehicle_visual_odometry);
+	_vehicle_odo_sub.copy(&vehicle_odo_data);
 
 	_vehicle_health_sub.copy(&vehicleHealth);
 	_jetson_control_sub.copy(&jetsonControl);
@@ -218,7 +218,7 @@ void RS_MovementControl::Run()
 
 	case vehicle_status_s::NAVIGATION_STATE_POSCTL:			// Thruster control in hold mode
 
-		control_hold(vehicle_local_position, thrustSetpoint, torqueSetpoint, buoyancyControl, now);
+		control_hold(vehicle_odo_data, thrustSetpoint, torqueSetpoint, buoyancyControl, now);
 		//pid in for x,y,z, roll, pitch, yaw thrusters
 		//evt later langzame pid voor buoyancy voor Z,roll,pitch
 		break;
@@ -348,13 +348,13 @@ void RS_MovementControl::control_manual(const manual_control_setpoint_s &manual,
 
 }
 
-void RS_MovementControl::control_hold(const vehicle_local_position_s &lp, vehicle_thrust_setpoint_s &thrust,
+void RS_MovementControl::control_hold(const vehicle_odometry_s &odom, vehicle_thrust_setpoint_s &thrust,
 vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now)
 {
     if (!_hold_position_set) {
-        _hold_x = lp.x;
-        _hold_y = lp.y;
-        _hold_z = lp.z;
+        _hold_x = odom.position[0];
+        _hold_y = odom.position[1];
+        _hold_z = odom.position[2];
 
 	_pid_x.reset();
 	_pid_y.reset();
@@ -370,16 +370,16 @@ vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now
 
     if (dt > 0.099f) {
 
-	_pid_x.update(_rs_x_kp.get(), _rs_x_ki.get(), _rs_x_kd.get(), _hold_x, lp.x, dt);
+	_pid_x.update(_rs_x_kp.get(), _rs_x_ki.get(), _rs_x_kd.get(), _hold_x, odom.position[0], dt);
 
-	_pid_y.update(_rs_y_kp.get(), _rs_y_ki.get(), _rs_y_kd.get(), _hold_y, lp.y, dt);
+	_pid_y.update(_rs_y_kp.get(), _rs_y_ki.get(), _rs_y_kd.get(), _hold_y, odom.position[1], dt);
 
-	_pid_z.update(_rs_z_kp.get(), _rs_z_ki.get(), _rs_z_kd.get(), _hold_z, lp.z, dt);
+	_pid_z.update(_rs_z_kp.get(), _rs_z_ki.get(), _rs_z_kd.get(), _hold_z, odom.position[2], dt);
 
         _last_run = now;
 
-        PX4_INFO("Hold Active - X_Err: %.2f | X_Thrust: %.2f", (double)(_hold_x - lp.x), (double)thrust.xyz[0]);
-	PX4_INFO("Hold sp %.2f", (double)lp.x);
+        PX4_INFO("Hold Active - X_Err: %.2f | X_Thrust: %.2f", (double)(_hold_x - odom.position[0]), (double)thrust.xyz[0]);
+	PX4_INFO("Hold sp %.2f", (double)odom.position[0]);
     }
     thrust.xyz[0] = -_pid_x.get_output();
     thrust.xyz[1] = _pid_y.get_output();
