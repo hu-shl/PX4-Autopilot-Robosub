@@ -182,6 +182,7 @@ void RS_MovementControl::Run()
 	// create objects to copy data to and from
 	manual_control_setpoint_s manualControlInput;
 	vehicle_local_position_s vehicle_local_position;
+	// vehicle_visual_odometry_s vehicle_visual_odometry;
 	vehicle_thrust_setpoint_s thrustSetpoint{};
 	vehicle_torque_setpoint_s torqueSetpoint{};
 	buoyancy_control_s	  buoyancyControl{};
@@ -194,6 +195,7 @@ void RS_MovementControl::Run()
 	_manual_control_setpoint_sub.copy(&manualControlInput);
 	_vehicle_status_sub.copy(&status);
 	_vehicle_local_position_sub.copy(&vehicle_local_position);
+	// _vehicle_visual_odometry_sub.copy(&vehicle_visual_odometry);
 
 	_vehicle_health_sub.copy(&vehicleHealth);
 	_jetson_control_sub.copy(&jetsonControl);
@@ -377,8 +379,9 @@ vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now
         _last_run = now;
 
         PX4_INFO("Hold Active - X_Err: %.2f | X_Thrust: %.2f", (double)(_hold_x - lp.x), (double)thrust.xyz[0]);
+	PX4_INFO("Hold sp %.2f", (double)lp.x);
     }
-    thrust.xyz[0] = _pid_x.get_output();
+    thrust.xyz[0] = -_pid_x.get_output();
     thrust.xyz[1] = _pid_y.get_output();
     thrust.xyz[2] = _pid_z.get_output();
     thrust.timestamp = now;

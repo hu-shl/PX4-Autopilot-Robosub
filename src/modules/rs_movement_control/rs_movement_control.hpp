@@ -50,7 +50,8 @@
 // Sensor EKF subscriptions
 #include <uORB/topics/vehicle_angular_velocity.h>			// attitude rates
 #include <uORB/topics/vehicle_attitude.h>				// attitude
-#include <uORB/topics/vehicle_local_position.h>				// position, velocity and acceleration
+#include <uORB/topics/vehicle_local_position.h>
+// #include <uORB/topics/vehicle_visual_odometry.h>		// position, velocity and acceleration
 
 // Thruster & Buoyancy control outputs & arm control
 #include <uORB/topics/vehicle_torque_setpoint.h>			// for controlling torque in thruster system
@@ -189,7 +190,8 @@ private:
 	// Sensor EKF subscriptions
 	uORB::Subscription _vehicle_angular_velocity_sub{ORB_ID(vehicle_angular_velocity)};
 	uORB::Subscription _vehicle_attitude_sub{ORB_ID(vehicle_attitude)};
-	uORB::Subscription _vehicle_local_position_sub{ORB_ID(vehicle_local_position)};					// should be converted to Callback later on
+	uORB::Subscription _vehicle_local_position_sub{ORB_ID(vehicle_local_position)};
+	// uORB::Subscription _vehicle_visual_odometry_sub{ORB_ID(vehicle_visual_odometry)};		// should be converted to Callback later on
 	// uORB::SubscriptionCallbackWorkItem _vehicle_local_position_sub{this, ORB_ID(vehicle_local_position)};
 	// Run the module when new position data is available
 
