@@ -382,7 +382,7 @@ vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now
 	PX4_INFO("Hold sp %.2f", (double)odom.position[0]);
     }
     thrust.xyz[0] = -_pid_x.get_output();
-    thrust.xyz[1] = _pid_y.get_output();
-    thrust.xyz[2] = _pid_z.get_output();
+    thrust.xyz[1] = -_pid_y.get_output();
+    thrust.xyz[2] = -_pid_z.get_output();
     thrust.timestamp = now;
 }
