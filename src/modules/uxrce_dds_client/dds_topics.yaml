@@ -182,5 +182,8 @@ subscriptions:
   - topic: /fmu/in/jetson_control
     type: px4_msgs::msg::JetsonControl
 
+  - topic: /fmu/in/vehicle_health
+    type: px4_msgs::msg::VehicleHealth
+
 # Create uORB::PublicationMulti
 subscriptions_multi:
