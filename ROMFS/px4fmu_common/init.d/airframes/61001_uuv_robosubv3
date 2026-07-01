@@ -28,7 +28,7 @@ param set-default CA_METHOD 2
 param set-default CA_AIRFRAME 7
 
 # Rotor Count
-# -> 7 rotors (Thrusters)
+# -> 8 rotors (Thrusters)
 param set-default CA_ROTOR_COUNT 8
 
 # Failure Mode

@@ -69,7 +69,7 @@ using namespace time_literals;
 // ################################################################################
 // #	Task Class
 // ################################################################################
-class RS_PID {
+class RS_PID {							//custom class used for pid control
 public:
 	RS_PID(float limit = 1.0f) : _limit(limit) {}
 
@@ -143,6 +143,8 @@ private:
 
 	void loadParams();	// extra function to handle parameter updates
 
+	//Hieronder de 3 functies die in "Manual mode"
+
 	void control_manual(const manual_control_setpoint_s &manual, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, arm_control_s &arm, hrt_abstime now);
 	void control_hold(const vehicle_odometry_s &odom, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, buoyancy_control_s &buoyancy, hrt_abstime now);
 	void control_jetson(const vehicle_local_position_s &lp, vehicle_thrust_setpoint_s &thrust, vehicle_torque_setpoint_s &torque, hrt_abstime now);
@@ -163,6 +165,20 @@ private:
 		(ParamFloat<px4::params::RS_MAN_MODE>) _rs_man_mode
 
 	)
+
+	// (ParamFloat<px4::params::RS_YAW_KP>) _rs_yaw_kp,		// Future PID for X,Y,Z,roll,pitch and yaw
+	// (ParamFloat<px4::params::RS_YAW_KI>) _rs_yaw_ki,
+	// (ParamFloat<px4::params::RS_YAW_KD>) _rs_yaw_kd,
+
+	// (ParamFloat<px4::params::RS_PITCH_KP>) _rs_pitch_kp,
+	// (ParamFloat<px4::params::RS_PITCH_KI>) _rs_pitch_ki,
+	// (ParamFloat<px4::params::RS_PITCH_KD>) _rs_pitch_kd,
+
+	// (ParamFloat<px4::params::RS_ROLL_KP>) _rs_roll_kp,
+	// (ParamFloat<px4::params::RS_ROLL_KI>) _rs_roll_ki,
+	// (ParamFloat<px4::params::RS_ROLL_KD>) _rs_roll_kd,
+
+
 
 	// ################################################################################
 	// #	uORB Subscriptions & Publications
